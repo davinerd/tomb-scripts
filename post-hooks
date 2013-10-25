@@ -11,42 +11,42 @@ fecho() {
 # just modified a little bit 
 boxstatus () {    # $1 =box name OR "" for all
 	declare -i idx=0
-  if [ "$1" = "" ]; then
-  	boxes=`find $mnt -maxdepth 1 -mindepth 1 -type d 2> /dev/null`
+  	if [ "$1" = "" ]; then
+  		boxes=`find $mnt -maxdepth 1 -mindepth 1 -type d 2> /dev/null`
 	else
-  	boxes="$1"
-  fi
-  IFS=$'\n'
-  if [ "$boxes" = "" ]; then
-  	return 1 # no sandbox exist
+  		boxes="$1"
+  	fi
+  	IFS=$'\n'
+  	if [ "$boxes" = "" ]; then
+  		return 1 # no sandbox exist
  	else
-  	for b in $boxes ; do
-    	bname="$(basename "$b")"
-      testdaemons=`ps -eo user,cmd | grep -v -e "grep" -e " /bin/su " | grep -c "sandfox .*--daemon.*$eventsfolder/$bname[[:blank:]]*$"`
-      testfolders=`find "$b" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort`
-      testfolders="${testfolders//$IFS/ }"
-      testmounts=`mount | grep -c " on $b/"`
-      if [ "$testfolders" != "" ] || [ "$testdaemons" != "" ] || (( testmounts > 0 )); then
-      	if (( testdaemons < 1 )) || [ ! -d "$eventsfolder/$bname" ]; then
-        	testdaemons="disabled"
-        else
-        	testdaemons="running"
-        fi
-       	if (( testmounts < 1 )); then
-        	testmounts="none"
-        else
-        	testmounts="$mnt/$bname/"
-        fi
+  		for b in $boxes ; do
+    		bname="$(basename "$b")"
+      		testdaemons=`ps -eo user,cmd | grep -v -e "grep" -e " /bin/su " | grep -c "sandfox .*--daemon.*$eventsfolder/$bname[[:blank:]]*$"`
+      		testfolders=`find "$b" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort`
+      		testfolders="${testfolders//$IFS/ }"
+      		testmounts=`mount | grep -c " on $b/"`
+      		if [ "$testfolders" != "" ] || [ "$testdaemons" != "" ] || (( testmounts > 0 )); then
+      			if (( testdaemons < 1 )) || [ ! -d "$eventsfolder/$bname" ]; then
+        			testdaemons="disabled"
+        		else
+        			testdaemons="running"
+        		fi
+       			if (( testmounts < 1 )); then
+        			testmounts="none"
+        		else
+        			testmounts="$mnt/$bname/"
+        		fi
 				# dirty hack - damn bash
 				# why you can't code A[$bname]=([status]=>$testdaemons, [mount]=>$testmounts) ????
 				SFNAME[idx]=$bname
 				SFSTATUS[idx]=$testdaemons
 				SFMOUNT[idx]=$testmounts
-      fi
+      		fi
 			idx+=1
-    done
+    	done
 	fi
-  IFS=" "
+  	IFS=" "
 }
 
 if [ "$1" == close ]; then
