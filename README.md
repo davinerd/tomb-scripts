@@ -1,11 +1,12 @@
-## Tomb-scripts
+Tomb-scripts
+============
 
-A collection of scripts to use with Tomb@.
+A collection of scripts to use with dyne/Tomb.
 To make life easier :)
 
 
 post-hooks
----------
+----------
 This is a simple post-hook script that executes on tomb 'close' action.
 It is made to deal with 'sandfox' and its chroot environments.
 
