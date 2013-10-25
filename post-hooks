@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+fecho() {
+	violet="\e[38;5;97m"
+	green="\e[38;5;10m"
+	echo -e "${violet}post-hook ${green}(*) post-hooks: $1\e[00m"
+}
+
+# thank you sandfox!
+# I can ever do better than this :)
+# just modified a little bit 
+boxstatus () {    # $1 =box name OR "" for all
+	declare -i idx=0
+  if [ "$1" = "" ]; then
+  	boxes=`find $mnt -maxdepth 1 -mindepth 1 -type d 2> /dev/null`
+	else
+  	boxes="$1"
+  fi
+  IFS=$'\n'
+  if [ "$boxes" = "" ]; then
+  	return 1 # no sandbox exist
+ 	else
+  	for b in $boxes ; do
+    	bname="$(basename "$b")"
+      testdaemons=`ps -eo user,cmd | grep -v -e "grep" -e " /bin/su " | grep -c "sandfox .*--daemon.*$eventsfolder/$bname[[:blank:]]*$"`
+      testfolders=`find "$b" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort`
+      testfolders="${testfolders//$IFS/ }"
+      testmounts=`mount | grep -c " on $b/"`
+      if [ "$testfolders" != "" ] || [ "$testdaemons" != "" ] || (( testmounts > 0 )); then
+      	if (( testdaemons < 1 )) || [ ! -d "$eventsfolder/$bname" ]; then
+        	testdaemons="disabled"
+        else
+        	testdaemons="running"
+        fi
+       	if (( testmounts < 1 )); then
+        	testmounts="none"
+        else
+        	testmounts="$mnt/$bname/"
+        fi
+				# dirty hack - damn bash
+				# why you can't code A[$bname]=([status]=>$testdaemons, [mount]=>$testmounts) ????
+				SFNAME[idx]=$bname
+				SFSTATUS[idx]=$testdaemons
+				SFMOUNT[idx]=$testmounts
+      fi
+			idx+=1
+    done
+	fi
+  IFS=" "
+}
+
+if [ "$1" == close ]; then
+	SANDFOX=`which sandfox`
+
+	if [ "$SANDFOX" ]; then
+		# default sandfox mount point
+		mnt="/mnt/sandfox"
+		fecho "Closing sandboxes..."
+		sts=`sudo $SANDFOX --closeall`
+		while [[ ! "$sts" =~ "No" && "$sts" ]]; do
+			sts=`$SANDFOX --status`
+			if [[ ! "$sts" =~ "No" ]]; then
+				boxstatus
+
+				declare -i n=${#SFNAME[@]}
+				declare -i i=0
+
+				while [[ "$i" -lt "$n" ]]; do
+					if [[ "${SFSTATUS[$i]}" == "disabled" && "${SFMOUNT[$i]}" == "none" ]]; then
+						# in this case we have a sandbox zombie! let's brutally kill him!
+						fecho "Found zombie sandbox (${SFNAME[$i]})! Killing him!"
+						sudo rm -rf ${mnt}/${SFNAME[$i]}
+					else
+						fecho "Found open sandbox (${SFNAME[$i]}). Closing..."
+						sudo $SANDFOX --close ${SFNAME[$i]}
+					fi
+					i+=1
+				done
+			fi
+		done
+	fi 
+fi
