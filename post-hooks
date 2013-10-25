@@ -7,7 +7,7 @@ fecho() {
 }
 
 # thank you sandfox!
-# I can ever do better than this :)
+# I can never do better than this :)
 # just modified a little bit 
 boxstatus () {    # $1 =box name OR "" for all
 	declare -i idx=0
@@ -15,10 +15,10 @@ boxstatus () {    # $1 =box name OR "" for all
 		boxes=`find $mnt -maxdepth 1 -mindepth 1 -type d 2> /dev/null`
 	else
 		boxes="$1"
-  	fi
-  	IFS=$'\n'
-  	if [ "$boxes" = "" ]; then
-  		return 1 # no sandbox exist
+	fi
+	IFS=$'\n'
+	if [ "$boxes" = "" ]; then
+		return 1 # no sandbox exist
 	else
 		for b in $boxes ; do
 			bname="$(basename "$b")"
@@ -44,9 +44,9 @@ boxstatus () {    # $1 =box name OR "" for all
 				SFMOUNT[idx]=$testmounts
       		fi
 			idx+=1
-		done
+    	done
 	fi
-	IFS=" "
+  	IFS=" "
 }
 
 if [ "$1" == close ]; then
@@ -57,26 +57,24 @@ if [ "$1" == close ]; then
 		mnt="/mnt/sandfox"
 		fecho "Closing sandboxes..."
 		sts=`sudo $SANDFOX --closeall`
-		while [[ ! "$sts" =~ "No" && "$sts" ]]; do
-			sts=`$SANDFOX --status`
-			if [[ ! "$sts" =~ "No" ]]; then
-				boxstatus
+		sts=`$SANDFOX --status`
+		if [[ ! "$sts" =~ "No" ]]; then
+			boxstatus
 
-				declare -i n=${#SFNAME[@]}
-				declare -i i=0
+			declare -i n=${#SFNAME[@]}
+			declare -i i=0
 
-				while [[ "$i" -lt "$n" ]]; do
-					if [[ "${SFSTATUS[$i]}" == "disabled" && "${SFMOUNT[$i]}" == "none" ]]; then
-						# in this case we have a sandbox zombie! let's brutally kill him!
-						fecho "Found zombie sandbox (${SFNAME[$i]})! Killing him!"
-						sudo rm -rf ${mnt}/${SFNAME[$i]}
-					else
-						fecho "Found open sandbox (${SFNAME[$i]}). Closing..."
-						sudo $SANDFOX --close ${SFNAME[$i]}
-					fi
-					i+=1
-				done
-			fi
-		done
+			while [[ "$i" -lt "$n" ]]; do
+				if [[ "${SFSTATUS[$i]}" == "disabled" && "${SFMOUNT[$i]}" == "none" ]]; then
+					# in this case we have a sandbox zombie! let's brutally kill him!
+					fecho "Found zombie sandbox (${SFNAME[$i]})! Killing him!"
+					sudo rm -rf ${mnt}/${SFNAME[$i]}
+				else
+					fecho "Found open sandbox (${SFNAME[$i]}). Closing..."
+					sudo $SANDFOX --close ${SFNAME[$i]}
+				fi
+				i+=1
+			done
+		fi
 	fi 
 fi
