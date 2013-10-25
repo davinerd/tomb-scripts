@@ -1,0 +1,24 @@
+#!/bin/bash
+
+WHAT=$1
+
+# no checks here, be careful!
+TFILE=$HOME/myshinytomb
+KFILE=$HOME/myshinytomb.key
+
+SANDFOX=`which sandfox`
+THUNDERBIRD=`which thunderbird`
+FIREFOX=`which firefox`
+TOMB=`which tomb`
+
+$TOMB list "`basename $TFILE`" &> /dev/null
+
+if [ $? -eq 1 ]; then
+	$TOMB open $TFILE
+fi
+
+if [ "$WHAT" == "thunderbird" ]; then
+	sudo $SANDFOX --profile thunderbird $THUNDERBIRD
+elif [ "$WHAT" == "firefox" ]; then
+	sudo $SANDFOX --profile firefox $FIREFOX
+fi
