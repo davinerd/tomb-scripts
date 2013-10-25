@@ -21,3 +21,12 @@ alias firefox='/path/to/sandstart firefox'
 ```
 
 At the moment it only supports firefox and thunderbird, but you can easily add more applications: be sure to create the sandfox profile too!
+
+Scenario
+==============
+A possible use of these script can be as follow:
+
+1. Configure tomb bind-hooks with firefox and/or thunderbird [link](https://github.com/dyne/Tomb/wiki/Advancedfeatures#wiki-Bind_Hooks)
+2. place bind-hooks and post-hooks files in your tomb root directory
+3. place sandstart in your binary system folder, e.g. */usr/local/bin*
+4. so finally open a terminal and type e.g. 'firefox', so the scripts will mounts the tomb, will creates the sandbox environmnets and will executes your application. 
