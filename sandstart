@@ -6,19 +6,21 @@ WHAT=$1
 TFILE=$HOME/myshinytomb
 KFILE=$HOME/myshinytomb.key
 
-SANDFOX=`which sandfox`
+SANDTOMB=`which sandtomb`
 THUNDERBIRD=`which thunderbird`
 FIREFOX=`which firefox`
-TOMB=`which tomb`
+TOMBIN=`which tomb`
 
 $TOMB list "`basename $TFILE`" &> /dev/null
 
 if [ $? -eq 1 ]; then
-	$TOMB open $TFILE
+	$TOMBIN open $TFILE
 fi
 
+TOMBMOUNT="/media/${TFILE}"
+
 if [ "$WHAT" == "thunderbird" ]; then
-	sudo $SANDFOX --profile thunderbird $THUNDERBIRD
+	sudo $SANDTOMB --mountpoint ${TOMBMOUNT} --profile thunderbird $THUNDERBIRD
 elif [ "$WHAT" == "firefox" ]; then
-	sudo $SANDFOX --profile firefox $FIREFOX
+	sudo $SANDTOMB --mountpoint ${TOMBMOUNT} --profile firefox $FIREFOX
 fi
