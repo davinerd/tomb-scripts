@@ -42,22 +42,24 @@ boxstatus () {    # $1 =box name OR "" for all
 				SFNAME[idx]=$bname
 				SFSTATUS[idx]=$testdaemons
 				SFMOUNT[idx]=$testmounts
-      		fi
+			fi
 			idx+=1
-    	done
+		done
 	fi
-  	IFS=" "
+	IFS=" "
 }
 
 if [ "$1" == close ]; then
-	SANDFOX=`which sandfox`
-
-	if [ "$SANDFOX" ]; then
-		# default sandfox mount point
-		mnt="/mnt/sandfox"
+	SANDTOMB=`which sandtomb`
+	TOMBIN=`which tomb`
+	
+	if [ "$SANDTOMB" ]; then
+		# tomb mount point, using default /media
+		# WARNING: this works if one tomb is opened only
+		mnt=`$TOMBIN list | grep /media | awk -F ' ' '{print $4}' | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"`
 		fecho "Closing sandboxes..."
-		sts=`sudo $SANDFOX --closeall`
-		sts=`$SANDFOX --status`
+		sts=`sudo $SANDTOMB --mountpoint $mnt --closeall`
+		sts=`$SANDTOMB --mountpoint $mnt --status`
 		if [[ ! "$sts" =~ "No" ]]; then
 			boxstatus
 
@@ -71,7 +73,7 @@ if [ "$1" == close ]; then
 					sudo rm -rf ${mnt}/${SFNAME[$i]}
 				else
 					fecho "Found open sandbox (${SFNAME[$i]}). Closing..."
-					sudo $SANDFOX --close ${SFNAME[$i]}
+					sudo $SANDTOMB --close ${SFNAME[$i]}
 				fi
 				i+=1
 			done
