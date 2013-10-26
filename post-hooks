@@ -11,6 +11,7 @@ fecho() {
 # just modified a little bit 
 boxstatus () {    # $1 =box name OR "" for all
 	declare -i idx=0
+	local mnt="${mnt}/sandfox"
 	if [ "$1" = "" ]; then
 		boxes=`find $mnt -maxdepth 1 -mindepth 1 -type d 2> /dev/null`
 	else
