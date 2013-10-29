@@ -71,7 +71,7 @@ if [ "$1" == close ]; then
 				if [[ "${SFSTATUS[$i]}" == "disabled" && "${SFMOUNT[$i]}" == "none" ]]; then
 					# in this case we have a sandbox zombie! let's brutally kill him!
 					fecho "Found zombie sandbox (${SFNAME[$i]})! Killing him!"
-					sudo rm -rf ${mnt}/${SFNAME[$i]}
+					sudo rm -rf "${mnt}/sandfox/${SFNAME[$i]}"
 				else
 					fecho "Found open sandbox (${SFNAME[$i]}). Closing..."
 					sudo $SANDTOMB --close ${SFNAME[$i]}
