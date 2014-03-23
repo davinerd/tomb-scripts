@@ -39,4 +39,9 @@ A possible use of these script can be as follow:
 1. Configure tomb **bind-hooks** with firefox and/or thunderbird [link](https://github.com/dyne/Tomb/wiki/Advancedfeatures#wiki-Bind_Hooks)
 2. place **bind-hooks** and **post-hooks** files in your tomb root directory
 3. place **sandstart** and **sandtomb** in your binary system folder, e.g. */usr/local/bin*
-4. so finally open a terminal and type e.g. 'firefox', so the scripts will mounts the tomb, will creates the sandbox environmnets and will executes your application. 
+4. so finally open a terminal and type e.g. 'sandstart firefox' (or only 'firefox' if you configure the bash alias described above), so the scripts will mounts the tomb, will creates the sandbox environmnets and will executes your Firefox binary.
+
+Hack
+==============
+In order to add any applications to the sandfox method described above, you need to modify ***sandstart*** script and possibly add an alias in your bash profile.
+ 
