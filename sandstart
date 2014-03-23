@@ -17,7 +17,11 @@ if [ $? -eq 1 ]; then
 	$TOMBIN open $TFILE
 fi
 
-TOMBMOUNT="/media/${TFILE}"
+if [ $? -eq 1 ]; then
+	exit 1
+fi
+
+TOMBMOUNT="/media/`basename ${TFILE}`"
 
 if [ "$WHAT" == "thunderbird" ]; then
 	sudo $SANDTOMB --mountpoint ${TOMBMOUNT} --profile thunderbird $THUNDERBIRD
