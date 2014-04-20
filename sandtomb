@@ -842,7 +842,7 @@ EOF
 
 ######################################################################################
 # pre-init
-defaultprofolder="/etc/sandfox"
+defaultprofolder="${PWD}/sandfox-profiles"
 # BE CAREFUL if you change $mnt - folder will be removed
 mnt="/media/tomjones/sandfox"
 # eventsfolder cannot contain spaces and must be a bind
