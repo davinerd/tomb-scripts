@@ -12,7 +12,9 @@ TOMBIN="${BIN}/tomb"
 
 function usage() {
 	echo "Usage:"
-	echo "$0 <program to sandobox>"
+	echo "$0 <program | info>"
+	echo "program: program to sandbox into tomb"
+	echo "info: print sandstart informations"
 }
 
 function check_bin() {
