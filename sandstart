@@ -25,20 +25,23 @@ function check_bin() {
 }
 
 function print_info() {
+	local notfound
+
 	echo "sandstart info:"
 	echo "Tomb file path: $TFILE"
 	echo "Tomb keyfile: $KFILE"
 	echo "Tomb mount point: $MNTP"
 	check_bin "${TOMBIN}"
 	if [ "$?" -eq 1 ]; then
-		addstr="[NOT FOUND]"
+		notfound="[NOT FOUND]"
 	fi
-	echo "Tomb binary path: $TOMBIN $addstr"
+	echo "Tomb binary path: $TOMBIN $notfound"
 	check_bin "${SANDTOMB}"
 	if [ "$?" -eq 1 ]; then
-		addstr="[NOT FOUND]"
+		notfound="[NOT FOUND]"
 	fi
-	echo "Sandtomb path: $SANDTOMB $addstr"
+	echo "Sandtomb path: $SANDTOMB $notfound"
+	echo "dentro not found: $notfound"
 }
 
 # check if we passed a real program to sandbox
@@ -52,6 +55,18 @@ if [ "${WHAT}" == "info" ]; then
 	exit 0
 elif ! [ "`which ${WHAT}`" ]; then
 	echo "Error: cannot find $WHAT"
+	exit 1
+fi
+
+check_bin "${TOMBIN}"
+if [ "$?" -eq 1 ]; then
+	echo "Error: tomb not found. Please run '$0 info' for more informations"
+	exit 1
+fi
+
+check_bin "${SANDTOMB}"
+if [ "$?" -eq 1 ]; then
+	echo "Error: sandtomb not found. Please run '$0 info' for more informations"
 	exit 1
 fi
 
