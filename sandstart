@@ -6,16 +6,54 @@ MNTP="/media"
 # no checks here, be careful!
 TFILE="${HOME}/myshinytomb"
 KFILE="${HOME}/myshinytomb.key"
+BIN="${PWD}/bin"
+SANDTOMB="${BIN}/sandtomb"
+TOMBIN="${BIN}/tomb"
 
-SANDTOMB=`which sandtomb`
-TOMBIN=`which tomb`
+function usage() {
+	echo "Usage:"
+	echo "$0 <program to sandobox>"
+}
+
+function check_bin() {
+	if ! [ -e "${1}" ]; then
+		return 1
+	fi
+	return 0
+}
+
+function print_info() {
+	echo "sandstart info:"
+	echo "Tomb file path: $TFILE"
+	echo "Tomb keyfile: $KFILE"
+	echo "Tomb mount point: $MNTP"
+	check_bin "${TOMBIN}"
+	if [ "$?" -eq 1 ]; then
+		addstr="[NOT FOUND]"
+	fi
+	echo "Tomb binary path: $TOMBIN $addstr"
+	check_bin "${SANDTOMB}"
+	if [ "$?" -eq 1 ]; then
+		addstr="[NOT FOUND]"
+	fi
+	echo "Sandtomb path: $SANDTOMB $addstr"
+}
 
 # check if we passed a real program to sandbox
-if ! [ "${WHAT}" ] || ! [ "`which ${WHAT}`" ]; then
+if ! [ "${WHAT}" ]; then
+	usage
 	exit 1
 fi
 
-"${TOMB}" list "`basename ${TFILE}`" &> /dev/null
+if [ "${WHAT}" == "info" ]; then
+	print_info
+	exit 0
+elif ! [ "`which ${WHAT}`" ]; then
+	echo "Error: cannot find $WHAT"
+	exit 1
+fi
+
+"${TOMBIN}" list "`basename ${TFILE}`" &> /dev/null
 
 if [ $? -eq 1 ]; then
 	"${TOMBIN}" open "${TFILE}"
