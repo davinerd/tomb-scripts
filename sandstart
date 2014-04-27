@@ -75,17 +75,21 @@ if ! [ "${SUDO}" ] || ! [ -e "${SUDO}" ]; then
 	exit 1
 fi
 
-"${TOMBIN}" list "`basename ${TFILE}`" &>/dev/null
-if [ "$?" -eq 0 ]; then
-	"${TOMBIN}" open "${TFILE}"
-	if [ "$?" -eq 1 ]; then
-		exit 1
-	fi
-else
-	echo "Error: cannot find $TFILE. Please run '$0 info' for more informations"
+# check if tomb file or tomb key exists
+if ! [ -e "${TFILE}" ] || ! [ -e "${KFILE}" ]; then
+	echo "Error: cannot find $TFILE or $KFILE. Please run '$0 info' for more informations"
 	exit 1
 fi
 
-TOMBMOUNT="${MNTP}/"`basename ${TFILE}`""
+# check if we have the tomb already opened
+"${TOMBIN}" list "`basename ${TFILE}`" &>/dev/null
+if [ "$?" -eq 1 ]; then
+	# if not, open it
+	"${TOMBIN}" open "${TFILE}" -k "${KFILE}"
+	if [ "$?" -eq 1 ]; then
+		exit 1
+	fi
+fi
 
+TOMBMOUNT="${MNTP}/"`basename ${TFILE}`""
 "${SUDO}" "${SANDTOMB}" --mountpoint "${TOMBMOUNT}" --profile "${WHAT}" "${WHAT}"
