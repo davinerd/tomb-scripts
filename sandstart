@@ -42,7 +42,6 @@ function print_info() {
 		notfound="[NOT FOUND]"
 	fi
 	echo "Sandtomb path: $SANDTOMB $notfound"
-	echo "dentro not found: $notfound"
 }
 
 # check if we passed a real program to sandbox
