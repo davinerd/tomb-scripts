@@ -3,7 +3,6 @@
 WHAT="$1"
 MNTP="/media"
 
-# no checks here, be careful!
 TFILE="${HOME}/myshinytomb"
 KFILE="${HOME}/myshinytomb.key"
 BIN="${PWD}/bin"
@@ -45,7 +44,7 @@ function print_info() {
 }
 
 # check if we passed a real program to sandbox
-if ! [ "${WHAT}" ]; then
+if  [ "$#" -lt 1 ]; then
 	usage
 	exit 1
 fi
